@@ -1,0 +1,58 @@
+#unsourced-overlay {
+    position: fixed;
+    top: 32px;
+    left: 32px;
+    z-index: 100;
+    font-size: 12px;
+    font-family: Helvetica, Arial, Sans-Serif;
+}
+
+
+/****
+ * warning label 
+ */
+
+.unsourced-label {
+  margin: 1em 0;
+  padding: 0.5em;
+  display: block;
+  position: relative;
+  color: #000;
+  background-color: #fbd415;
+  border-radius: 0.5em;
+  border: 0.4em solid #F8BB08; 
+/*  transform: translate3d(0,0,0) rotate(-15deg);
+  -webkit-transform: translate3d(0,0,0) rotate(-15deg);
+  -moz-transform: translate3d(0,0,0) rotate(-15deg);
+*/
+  font-size: 12px;
+
+  max-width: 16em;
+/*
+  -webkit-transition: all 0.2s ease-in-out;
+  -moz-transition: all 0.2s ease-in-out;
+*/
+}
+
+.unsourced-label:hover {
+/*
+  transform: translate3d(0,0,0) rotate(0deg) scale(1.25);
+  -webkit-transform: translate3d(0,0,0) rotate(0deg) scale(1.25);
+  -moz-transform: translate3d(0,0,0) rotate(0deg) scale(1.25);
+*/
+}
+
+.unsourced-label-icon {
+  float: left;
+  clear: right;
+}
+
+.unsourced-label-bod {
+  margin-left: 40px;
+}
+.unsourced-label-head {
+  font-size: 120%;
+  font-weight: bold;
+}
+
+
