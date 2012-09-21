@@ -44,6 +44,8 @@ self.port.on('augmentArticle', augmentArticle);
 $(document).ready( function() {
   console.log("Document ready.");
   self.port.emit("contentReady");
+
+
 });
 
 
