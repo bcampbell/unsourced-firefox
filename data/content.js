@@ -22,7 +22,6 @@ function render(tmpl, values) {
 
 
 function augmentArticle(artDetails) {
-  console.log("Augmenting article ",artDetails);
   $('body').append('<div id="unsourced-overlay"></div>');
   if( artDetails.status == 'found' ) {
     /* show warning labels */  
@@ -42,10 +41,7 @@ self.port.on('augmentArticle', augmentArticle);
 
 
 $(document).ready( function() {
-  console.log("Document ready.");
   self.port.emit("contentReady");
-
-
 });
 
 
