@@ -1,14 +1,16 @@
-  function showDetails(artDetails) {
-
-    var tmplName = artDetails.status=='found' ? 'popup-found-tmpl':'popup-notfound-tmpl';
+function display(tmplName,params) {
     var template = document.getElementById(tmplName).innerHTML;
-    var parsed = Ashe.parse(template, artDetails);
+    var parsed = Ashe.parse(template, params);
     document.getElementById('content').innerHTML = parsed;
   }
 
+self.port.on("showDetails", function (artDetails) {
+  display('popup-details-tmpl', artDetails);
+});
 
-  self.port.on("showDetails", function (artDetails) {
-    showDetails(artDetails);
-  });
+self.port.on("showNoDetails", function (stuff) {
+  display('popup-no-details-tmpl', stuff);
+});
+
 
 

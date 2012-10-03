@@ -4,13 +4,13 @@
     <title>unsourced.org extension</title>
 
     <link rel="stylesheet" href="style.css" type="text/css">
+<!--
     <style>
       body {
         min-width:357px;
         overflow-x:hidden;
       }
     </style>
-<!--
     <script src="/js/lib/jquery.js"></script>
     <script src="/js/lib/ashe.js"></script>
     <script src="/js/popup.js"></script>
@@ -20,7 +20,7 @@
 
 
 <!-- template for when we have data about the article -->
-<script id="popup-found-tmpl" type="text/x-jquery-tmpl">
+<script id="popup-details-tmpl" type="text/x-jquery-tmpl">
 
     <h3>Sources</h3>
     <ul class="srclist">
@@ -74,12 +74,12 @@
     {% endif %}
 </script>
 
-<!-- template for when we have no data about the article -->
-<script id="popup-notfound-tmpl" type="text/x-jquery-tmpl">
-  <p>Sorry, no information currently held about this article. Think it needs sourcing?<br/>
+<!-- template when we have no details about the article -->
+<script id="popup-no-details-tmpl" type="text/x-jquery-tmpl">
+  <p>Sorry, no more information about this article. Think it is missing some sources or warning labels?<br/>
     <br/>
     <br/>
-  <a target="_blank" class="btn btn-major" href="{{submit_url}}">Find sources</a>
+  <a target="_blank" class="btn btn-major" href="{{submit_url}}">Add sources</a>
   </p>
 </script>
 

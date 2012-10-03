@@ -12,47 +12,46 @@
  * warning label 
  */
 
-.unsourced-label {
+#unsourced-overlay .unsourced-label {
   margin: 1em 0;
   padding: 0.5em;
   display: block;
-  position: relative;
   color: #000;
   background-color: #fbd415;
   border-radius: 0.5em;
   border: 0.4em solid #F8BB08; 
-/*  transform: translate3d(0,0,0) rotate(-15deg);
+  transform: translate3d(0,0,0) rotate(-15deg);
   -webkit-transform: translate3d(0,0,0) rotate(-15deg);
   -moz-transform: translate3d(0,0,0) rotate(-15deg);
-*/
   font-size: 12px;
 
   max-width: 16em;
-/*
   -webkit-transition: all 0.2s ease-in-out;
   -moz-transition: all 0.2s ease-in-out;
-*/
 }
 
-.unsourced-label:hover {
-/*
+#unsourced-overlay .unsourced-label:hover {
   transform: translate3d(0,0,0) rotate(0deg) scale(1.25);
   -webkit-transform: translate3d(0,0,0) rotate(0deg) scale(1.25);
   -moz-transform: translate3d(0,0,0) rotate(0deg) scale(1.25);
-*/
 }
 
-.unsourced-label-icon {
+#unsourced-overlay .unsourced-label-icon {
+  width: 32px;
+  height: 32px;
+  display: block;
   float: left;
-  clear: right;
 }
 
-.unsourced-label-bod {
+#unsourced-overlay .unsourced-label-bod {
   margin-left: 40px;
 }
-.unsourced-label-head {
+
+
+#unsourced-overlay .unsourced-label-head {
   font-size: 120%;
   font-weight: bold;
+  display: block;
 }
 
 
