@@ -1,9 +1,8 @@
 {
     "name": "unsourced", 
-    "license": "MPL 2.0", 
-    "author": "Ben Campbell", 
+    "license": "AGPL 3.0 <http://www.gnu.org/licenses/agpl-3.0.html>", 
+    "author": "Ben Campbell <ben@scumways.com>", 
     "version": "0.1", 
-    "fullName": "unsourced", 
-    "id": "jid1-FOSKvhWYoSDzrQ", 
-    "description": "a basic add-on"
+    "id": "extension@unsourced.org", 
+    "description": "Shows missing sources and warning labels as you read the news"
 }
