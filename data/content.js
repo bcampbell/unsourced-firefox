@@ -1,11 +1,18 @@
 
 var label_template = '\
-<div class="unsourced-label">\
+<div class="unsrced-label">\
 \
-  <img class="unsourced-label-icon" src="{{icon_url}}" alt="{{prettyname}}" />\
-  <div class="unsourced-label-bod"><div class="unsourced-label-head">WARNING</div>\
+  <img class="unsrced-label-icon" src="{{icon_url}}" alt="{{prettyname}}" />\
+  <div class="unsrced-label-bod"><div class="unsrced-label-head">WARNING</div>\
   {{description}}\
   </div>\
+</div>\
+';
+
+var notification_template = '\
+<div class="unsrced-notification">\
+\
+  <div>{{msg}}</div><a href="#" class="unsrced-close">&times;</a>\
 </div>\
 ';
 
@@ -21,16 +28,38 @@ function render(tmpl, values) {
 
 
 
-function augmentArticle(artDetails) {
-  $('body').append('<div id="unsourced-overlay"></div>');
-  if( artDetails.status == 'found' ) {
-    /* show warning labels */  
-    for(var idx=0; idx<artDetails.labels.length; idx++) {
-      var label = artDetails.labels[idx];
-      var html = render(label_template, label);
-      $('#unsourced-overlay').append(html);
-    }
+function unsrced() {
+  var u= $('body #unsrced');
+  if(u.length == 0) {
+    u = $('<div id="unsrced"></div>').appendTo($('body'));
   }
+  return u;
+}
+
+function showWarningLabels( labels ) {
+  var overlay = unsrced();
+  for(var idx=0; idx<labels.length; idx++) {
+    var label = labels[idx];
+    var html = render(label_template, label);
+    $(html).hide().appendTo(overlay).fadeIn('fast');
+  }
+
+
+}
+
+
+/* overlay a notification banner at the top of the page */
+function showNotification(msg) {
+
+  var overlay = unsrced();
+  overlay.find('.unsrced-notification').remove();
+
+  var html = render(notification_template, {'msg':msg});
+  var n = $(html).hide().appendTo(overlay).fadeIn('fast');
+  n.find('a.unsrced-close').click(function() {
+    n.fadeOut('fast');
+    return false;
+  });
 }
 
 
@@ -88,32 +117,44 @@ function searchHTML(node,strings) {
 
 
 
-function checkTelltaleSigns() {
+// check the content of the page for various stuff
+function examinePage() {
 
+  var pageDetails = {};
+
+  // search for text that might indicate an article requires sourcing...
   var indicators = ["scientists have", "scientists say",  "paper published", "research suggests", "latest research", "researchers", "the study"]
-
 /* other possibilities:
   "according to a new study"
   "the study"
   "findings"
-
 */
 
+  /* TODO: could check for obvious containers, to exclude menus, sidebars and other cruft */
   var hits = searchHTML(document.body, indicators);
   if(hits.length>0) {
     // looks like sourcing is needed...
-    console.log("TELLTALE SIGNS!");
+    pageDetails.indicatorsFound = true;
+  } else {
+    pageDetails.indicatorsFound = false;
   }
+
+  // if og:type is present, but not 'article', then we probably don't it
+  pageDetails.ogType = $('meta[property="og:type"]').attr('content');
+  return pageDetails;
 }
 
 
 /* firefox-specifics */
 
-self.port.on('augmentArticle', augmentArticle);
-
+self.port.on('showWarningLabels', showWarningLabels);
+self.port.on('showNotification', showNotification);
 
 $(document).ready( function() {
-  self.port.emit("contentReady");
+
+  var pageDetails = examinePage();
+  // tell main that doc is ready
+  self.port.emit("contentReady", pageDetails);
 });
 
 
