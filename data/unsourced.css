@@ -56,6 +56,7 @@
   display: block;
 }
 
+/* TODO: see data/content.js for replicated inline style and notes */
 #unsrced .unsrced-notification {
     background: #222;
     /* height: 30px; */

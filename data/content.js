@@ -9,8 +9,10 @@ var label_template = '\
 </div>\
 ';
 
+/* TODO: grr... inline styling to force override of inline page styles... works well
+ enough for now, but should look into a more elegant fix. */
 var notification_template = '\
-<div class="unsrced-notification">\
+<div class="unsrced-notification" style="background: #222; font-size: 20px; padding: 8px 16px; text-align: center; color: white; border-bottom: solid 2px #eee; opacity: 0.9; -moz-box-sizing: border-box; position: fixed; top: 0px; left: 0px; right: 100%;">\
 \
   <div>{{msg}}</div><a href="#" class="unsrced-close">&times;</a>\
 </div>\
