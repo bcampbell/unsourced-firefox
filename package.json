@@ -4,5 +4,7 @@
     "author": "Ben Campbell <ben@scumways.com>", 
     "version": "0.1", 
     "id": "extension@unsourced.org", 
-    "description": "Shows missing sources and warning labels as you read the news"
+    "description": "Shows missing sources and warning labels as you read the news",
+    "icon": "icon48.png",
+    "icon64": "icon64.png"
 }
