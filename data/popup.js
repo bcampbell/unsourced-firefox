@@ -12,5 +12,8 @@ self.port.on("showNoDetails", function (stuff) {
   display('popup-no-details-tmpl', stuff);
 });
 
+self.port.on("showSourcesMissing", function (stuff) {
+  display('popup-sources-missing-tmpl', stuff);
+});
 
 
