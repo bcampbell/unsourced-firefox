@@ -5,7 +5,7 @@ function display(tmplName,params) {
   }
 
 self.port.on("showDetails", function (artDetails) {
-  display('popup-details-tmpl', artDetails);
+  display('popup-details-tmpl',artDetails);
 });
 
 self.port.on("showNoDetails", function (stuff) {

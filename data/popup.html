@@ -21,11 +21,10 @@
 
 <!-- template for when we have data about the article -->
 <script id="popup-details-tmpl" type="text/x-jquery-tmpl">
-
-  {% if sources.length>0 %}
+  {% if sources.length %}
     <h3>Sources</h3>
     <ul class="srclist">
-    {%for src in sources%}
+    {% for src in sources %}
       <li class="src src-{{src.kind}}">
         <div class="src-info">
         {% if src.title %}
@@ -57,7 +56,7 @@
     <a target="_blank" class="btn" href="{{unsourced_url}}">Source it</a>
     {% endif %}
 
-    {% if labels.length>0 %}
+    {% if labels.length %}
     <h3>Warning Labels</h3>
     {% for label in labels %}    
 <div class="label">
