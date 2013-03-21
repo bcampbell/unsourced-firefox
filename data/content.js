@@ -1,3 +1,4 @@
+console.log("start content.js: F.A.B.");
 
 var label_template = '\
 <div class="unsrced-label">\
@@ -20,26 +21,40 @@ function render(tmpl, values) {
 
 
 
-
+// get or create the unsourced overlay element
 function unsrced() {
-  var u= $('body #unsrced');
-  if(u.length == 0) {
-    u = $('<div id="unsrced"></div>').appendTo($('body'));
+  var u = document.querySelector('body #unsrced');
+  if(u == null) {
+    u = document.createElement('div');
+    u.id = 'unsrced';
+    document.querySelector('body').appendChild(u);
   }
   return u;
 }
 
+
+
 function showWarningLabels( labels ) {
+  console.log("Showing labels",labels);
   var overlay = unsrced();
+  console.log(overlay);
   for(var idx=0; idx<labels.length; idx++) {
     var label = labels[idx];
-    var html = render(label_template, label);
-    $(html).hide().appendTo(overlay).fadeIn('fast');
+    var holder = document.createElement('div');
+    holder.innerHTML = render(label_template, label);
+    overlay.appendChild(holder.firstChild);
   }
-
 
 }
 
+function hideWarningLabels() {
+/* UNTESTED
+  var overlay = unsrced();
+  for (var i = overlay.children.length - 1; i >= 0; i--) {
+    overlay.removeChild(overlay.children[i]);
+  }
+*/
+}
 
 
 
@@ -99,40 +114,116 @@ function searchHTML(node,strings) {
 // check the content of the page for various stuff
 function examinePage() {
 
-  var pageDetails = {};
+  var pd = {};
 
-  // search for text that might indicate an article requires sourcing...
-  var indicators = ["scientists have", "scientists say",  "paper published", "research suggests", "latest research", "researchers", "the study"]
-/* other possibilities:
-  "according to a new study"
-  "the study"
-  "findings"
-*/
+  {
+    // search for text that might indicate an article requires sourcing...
+    var indicators = ["scientists have", "scientists say",  "paper published", "research suggests", "latest research", "researchers", "the study"]
+  /* other possibilities:
+    "according to a new study"
+    "the study"
+    "findings"
+  */
 
   /* TODO: could check for obvious containers, to exclude menus, sidebars and other cruft */
-  var hits = searchHTML(document.body, indicators);
-  if(hits.length>0) {
-    // looks like sourcing is needed...
-    pageDetails.indicatorsFound = true;
-  } else {
-    pageDetails.indicatorsFound = false;
+    var hits = searchHTML(document.body, indicators);
+    if(hits.length>0) {
+      // looks like sourcing is needed...
+      pd.indicatorsFound = true;
+    } else {
+      pd.indicatorsFound = false;
+    }
   }
 
-  // if og:type is present, but not 'article', then we probably don't it
-  pageDetails.ogType = $('meta[property="og:type"]').attr('content');
-  return pageDetails;
+
+  // is an og:type metatag present?
+  {
+    pd.ogType = null;
+    var meta_ogtype = document.querySelector('meta[property="og:type"]');
+    if( meta_ogtype != null ) {
+      if(meta_ogtype.content !== undefined) {
+        pd.ogType = meta_ogtype.content;
+      }
+    }
+  }
+
+  // how about a schema.org type?
+  {
+    var container = document.querySelector('[itemscope][itemtype]')
+    if( container != null ) {
+      pd.schemaType = container.getAttribute('itemtype');
+    } else {
+      pd.schemaType = null;
+    }
+  }
+
+  // hNews?
+  {
+    hnews = document.querySelector('.hnews')
+    if( hnews != null ) {
+      pd.hnews = true;
+    } else {
+      pd.hnews = false;
+    }
+  }
+
+
+  var schemaorg_art_types = [
+    "http://schema.org/Article",
+    "http://schema.org/NewsArticle",
+    "http://schema.org/BlogPosting",
+    "http://schema.org/ScholarlyArticle",
+    "http://schema.org/MedicalScholarlyArticle" ];
+
+  /* now make a call - are we confident it is or isn't an article? */
+  pd.isDefinitelyArticle = false;
+  pd.isDefinitelyNotArticle = false;
+
+  if(pd.schemaType !== null ) {
+    if(schemaorg_art_types.indexOf(pd.schemaType) > -1 ) {
+      pd.isDefinitelyArticle = true;
+    } else {
+      pd.isDefinitelyNotArticle = true;
+    }
+  }
+
+  if( pd.ogType !== null ) {
+    if( pd.ogType=='article' || pd.ogType=='tumblr-feed:entry') {
+      pd.isDefinitelyArticle = true;
+    }
+
+    if( pd.ogType=='website') {
+      pd.isDefinitelyNotArticle = true;
+    }
+  }
+
+  if( pd.hnews==true ) {
+    pd.isDefinitelyArticle = true;
+  }
+
+  // could have conflicting info...
+  if( pd.isDefinitelyArticle && pd.isDefinitelyNotArticle ) {
+    // ignore all!
+    pd.isDefinitelyArticle = false;
+    pd.isDefinitelyNotArticle = false;
+  }
+
+  return pd;
 }
+
+
 
 
 /* firefox-specifics */
 
 self.port.on('showWarningLabels', showWarningLabels);
+self.port.on('hideWarningLabels', hideWarningLabels);
 
 $(document).ready( function() {
 
   var pageDetails = examinePage();
-  // tell main that doc is ready
-  self.port.emit("contentReady", pageDetails);
+  // tell main that we've had a look at the page
+  self.port.emit("pageExamined", pageDetails);
 });
 
 
