@@ -26,64 +26,53 @@ function display(tmplName,params)
 /* firefox specifics */
 
 
-function bind(state) {
-
-
-
-
-
-
-
-  console.log("popup.js: bind()", JSON.stringify(state,null," "));
-
-
-
-
-
-
-
+function bind(state,options) {
+//  console.log("popup.js: bind()", JSON.stringify(state,null," "));
 
   if( state === undefined ||state === null ) {
     display('popup-inactive-tmpl', {});
   } else {
-// HACK HACK HACK FIX FIX FIX
-state.getSubmitURL = function() {
-  var submit_url = "";  //options.search_server + '/addarticle?url=' + encodeURIComponent(this.url);
-  return submit_url;
-};
-// some helpers for use in popup.html template (ashe can only do boolean if statements)
-state.isLookupNone = function() { return this.lookupState == 'none'; };
-state.isLookupReady = function() { return this.lookupState == 'ready'; };
-state.isLookupPending = function() { return this.lookupState == 'pending'; };
-state.isLookupError = function() { return this.lookupState == 'error'; };
 
-state.isDebugSet = function() { return true; };
-state.getDebugTxt = function() { return JSON.stringify(this,null," "); };
+    // HACK HACK HACK FIX FIX FIX
+    // in firefox version, content page can't access functions on the state,
+    // so we fudge it by re-adding them here!
+    state.getSubmitURL = function() {
+      var submit_url = options.search_server + '/addarticle?url=' + encodeURIComponent(this.url);
+      return submit_url;
+    };
+    // some helpers for use in popup.html template (ashe can only do boolean if statements)
+    state.isLookupNone = function() { return this.lookupState == 'none'; };
+    state.isLookupReady = function() { return this.lookupState == 'ready'; };
+    state.isLookupPending = function() { return this.lookupState == 'pending'; };
+    state.isLookupError = function() { return this.lookupState == 'error'; };
 
-state.wasArticleFound = function() { return this.lookupState == 'ready' && this.lookupResults.status=='found'; };
+    state.isDebugSet = function() { return options.debug; };
+    state.getDebugTxt = function() { return JSON.stringify(this,null," "); };
 
-state.isSourcingRequired = function() {
-  if( this.wasArticleFound() ) {
-    return this.lookupResults.needs_sourcing;
-  }
-  
-  if( this.pageDetails && !this.pageDetails.isDefinitelyNotArticle && this.pageDetails.indicatorsFound ) {
-    return true;
-  }
-  return false;
-};
+    state.wasArticleFound = function() { return this.lookupState == 'ready' && this.lookupResults.status=='found'; };
+
+    state.isSourcingRequired = function() {
+      if( this.wasArticleFound() ) {
+        return this.lookupResults.needs_sourcing;
+      }
+      
+      if( this.pageDetails && !this.pageDetails.isDefinitelyNotArticle && this.pageDetails.indicatorsFound ) {
+        return true;
+      }
+      return false;
+    };
 
 
-    display('popup-details-tmpl', state);
-    // wire up any other javascript here (eg buttons)
-    // (chrome extensions don't support any javascript in the html file,
-    // so it's got to be done here
+        display('popup-details-tmpl', state);
+        // wire up any other javascript here (eg buttons)
+        // (chrome extensions don't support any javascript in the html file,
+        // so it's got to be done here
 
-//    var lookupButtons = document.querySelectorAll('.start-manual-lookup');
-//    for (var i = 0; i < lookupButtons.length; ++i) {
-      // TODO: probably needs to be message-based
-//      lookupButtons[i].onclick = function() { state.startLookup(); return false; }
-//    }
+    //    var lookupButtons = document.querySelectorAll('.start-manual-lookup');
+    //    for (var i = 0; i < lookupButtons.length; ++i) {
+          // TODO: probably needs to be message-based
+    //      lookupButtons[i].onclick = function() { state.startLookup(); return false; }
+    //    }
   }
 }
 
@@ -93,6 +82,6 @@ state.isSourcingRequired = function() {
 
 self.port.on("bind", bind);
 
-
-bind(null);
+// TODO: start off in a better state... (haven't got options here)
+//bind(null);
 

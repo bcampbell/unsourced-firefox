@@ -6,5 +6,13 @@
     "id": "extension@unsourced.org", 
     "description": "Shows missing sources and warning labels as you read the news",
     "icon": "icon48.png",
-    "icon64": "icon64.png"
+    "icon64": "icon64.png",
+    "preferences": [
+      {
+      "type": "control",
+      "label": "Options",
+      "name": "show-options-page",
+      "title": "Display the options page"
+      }
+    ]
 }

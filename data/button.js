@@ -1,6 +1,6 @@
 
 function reconfig(params) {
-  console.log("button.js: reconfig");
+//  console.log("button.js: reconfig");
   var icons = {
     'missingsources': "nag.gif",
     'unsourced': "unsourced.png",

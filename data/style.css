@@ -283,22 +283,26 @@ a.btn:visited {
 }
 
 
-/****/
+/****
+ * toggle expanded/collapsed sections
+ */
 
+/* begin CHROME */
 .toggle {
     font-size: 110%;
     -webkit-appearance: none;
 }
+.toggle:after { content: "\25b6"; }
+.toggle:checked:after { content: "\25bc"; }
+/* end CHROME */
+
+/* begin FIREFOX */
+.toggle { -moz-appearance: button-arrow-next; }
+.toggle:checked { -moz-appearance: button-arrow-down; }
+/* end FIREFOX */
 
 .toggle+label:hover {
     text-decoration: underline;
-}
-
-.toggle:after {
-    content: "\25b6";
-}
-.toggle:checked:after {
-    content: "\25bc";
 }
 
 .toggle-targ {
