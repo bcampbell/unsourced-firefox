@@ -1,19 +1,98 @@
-function display(tmplName,params) {
+
+
+Ashe.addModifiers({
+    sourcelink: function(src) {
+      if(src.title) { 
+        return '<a target="_blank" href="' + src.url + '">' + src.title + '</a>';
+      } else {
+        var loc = parseUri(src.url);
+        var title = {'pr':"Press release", 'paper': "Paper", 'other':"Other link"}[src.kind] || 'Source';
+        return '<a target="_blank" href="' + src.url + '">' + title + '</a> (' + loc.host + ')';
+      }
+    }
+    // , oneMoreModifier: function(str) { ... }
+});
+
+
+
+function display(tmplName,params)
+{
     var template = document.getElementById(tmplName).innerHTML;
     var parsed = Ashe.parse(template, params);
     document.getElementById('content').innerHTML = parsed;
+}
+
+
+/* firefox specifics */
+
+
+function bind(state) {
+
+
+
+
+
+
+
+  console.log("popup.js: bind()", JSON.stringify(state,null," "));
+
+
+
+
+
+
+
+
+  if( state === undefined ||state === null ) {
+    display('popup-inactive-tmpl', {});
+  } else {
+// HACK HACK HACK FIX FIX FIX
+state.getSubmitURL = function() {
+  var submit_url = "";  //options.search_server + '/addarticle?url=' + encodeURIComponent(this.url);
+  return submit_url;
+};
+// some helpers for use in popup.html template (ashe can only do boolean if statements)
+state.isLookupNone = function() { return this.lookupState == 'none'; };
+state.isLookupReady = function() { return this.lookupState == 'ready'; };
+state.isLookupPending = function() { return this.lookupState == 'pending'; };
+state.isLookupError = function() { return this.lookupState == 'error'; };
+
+state.isDebugSet = function() { return true; };
+state.getDebugTxt = function() { return JSON.stringify(this,null," "); };
+
+state.wasArticleFound = function() { return this.lookupState == 'ready' && this.lookupResults.status=='found'; };
+
+state.isSourcingRequired = function() {
+  if( this.wasArticleFound() ) {
+    return this.lookupResults.needs_sourcing;
   }
+  
+  if( this.pageDetails && !this.pageDetails.isDefinitelyNotArticle && this.pageDetails.indicatorsFound ) {
+    return true;
+  }
+  return false;
+};
 
-self.port.on("showDetails", function (artDetails) {
-  display('popup-details-tmpl',artDetails);
-});
 
-self.port.on("showNoDetails", function (stuff) {
-  display('popup-no-details-tmpl', stuff);
-});
+    display('popup-details-tmpl', state);
+    // wire up any other javascript here (eg buttons)
+    // (chrome extensions don't support any javascript in the html file,
+    // so it's got to be done here
 
-self.port.on("showSourcesMissing", function (stuff) {
-  display('popup-sources-missing-tmpl', stuff);
-});
+//    var lookupButtons = document.querySelectorAll('.start-manual-lookup');
+//    for (var i = 0; i < lookupButtons.length; ++i) {
+      // TODO: probably needs to be message-based
+//      lookupButtons[i].onclick = function() { state.startLookup(); return false; }
+//    }
+  }
+}
 
+
+
+
+
+self.port.on("bind", bind);
+
+
+bind(null);
 

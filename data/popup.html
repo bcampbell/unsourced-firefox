@@ -11,28 +11,53 @@
         overflow-x:hidden;
       }
     </style>
-    <script src="/js/lib/jquery.js"></script>
     <script src="/js/lib/ashe.js"></script>
+    <script src="/js/lib/parseuri.js"></script>
     <script src="/js/popup.js"></script>
 -->
 </head>
   <body>
 
 
-<!-- template for when we have data about the article -->
+
+<!-- template to placeholder content, on pages we're not active on -->
+<script id="popup-inactive-tmpl" type="text/x-jquery-tmpl">
+<p>
+This is the <a href="http://unsourced.org">unsourced.org</a> extension.
+</p>
+<p>
+When viewing news articles, information about their sources will appear here.
+</p>
+
+</script>
+
+
+
+
+
+<!-- template to display details about a page we're tracking -->
 <script id="popup-details-tmpl" type="text/x-jquery-tmpl">
-  {% if sources.length %}
+{% if isDebugSet %}
+  <pre>
+  {{getDebugTxt}}
+  </pre>
+</pre>
+{% endif %}
+
+
+
+
+
+
+<!-- show results -->
+{% if wasArticleFound %}
+
     <h3>Sources</h3>
     <ul class="srclist">
-    {% for src in sources %}
+    {% for src in lookupResults.sources %}
       <li class="src src-{{src.kind}}">
         <div class="src-info">
-        {% if src.title %}
-        <a target="_blank" href="{{src.url}}">{{src.title}}</a>
-        {% else %}
-        <a target="_blank" href="{{src.url}}">{{src.url}}</a>
-        {% endif %}
-
+        <span class="src-link">{{src|sourcelink}}</span>
         {% if src.publication %}
           {% if src.pubdate %}
             <span class="publication">{{src.publication}}</span>, {{src.pubdate}}
@@ -47,53 +72,91 @@
       </li>
     {% endfor %}
     </ul>
-  {% else %}
-    <h3>No Sources</h3>
+
+  {% if lookupResults.needs_sourcing %}
+    <p class="notice notice-uhoh">This article is still missing some sources.</p>
+    <a target="_blank" class="btn" href="{{lookupResults.unsourced_url}}">Source it</a>
   {% endif %}
 
-    {% if needs_sourcing %}
-    <em>This article is still missing some sources.</em>
-    <a target="_blank" class="btn" href="{{unsourced_url}}">Source it</a>
-    {% endif %}
-
-    {% if labels.length %}
+  {% if lookupResults.labels.length %}
     <h3>Warning Labels</h3>
-    {% for label in labels %}    
+    {% for label in lookupResults.labels %}    
 <div class="label">
 <img class="label-icon" src="{{label.icon_url}}"/><div class="label-bod"><div class="label-head">WARNING</div>{{label.description}}</div>
 </div>
     {% endfor %}
-    {% else %}
+  {% else %}
     <h3>No Warning Labels</h3>
-    <div><a target="_blank" class="btn" href="{{unsourced_url}}">Add one</a></div>
+    <div><a target="_blank" class="btn" href="{{lookupResults.unsourced_url}}">Add one</a></div>
+  {% endif %}
+
+    <br/>
+    <br/>
+
+
+  {% if lookupResults.unsourced_url %}
+  <a target="_blank" href="{{lookupResults.unsourced_url}}">See this article's page on unsourced.org</a>
+  {% endif %}
+
+
+{% else %}
+
+  <!-- article not found on unsourced (yet) - show what we know so far -->
+
+  {% if isLookupPending %}
+   <p><img src="/img/busy.gif" /> Please wait - checking with unsourced.org... </p>
+  {% endif %}
+  {% if isLookupError %}
+    <p class="notice">
+      Sorry - there was a problem checking this page on unsourced.org...<br/>
+      <a class="start-manual-lookup" href="#">try again</a>
+    </p>
+  {% endif %}
+
+  {% if contentReady %}
+    {% if isLookupNone %}
+      <!-- no lookup was attempted. give the option to manually start lookup -->
+      <p>Is this page a news article? Is it missing sources or warning labels?</p>
+      <a class="btn start-manual-lookup" href="#">Look it up on unsourced.org</a>
     {% endif %}
+  {% else %}
+    <p><img src="/img/busy.gif" /> Waiting for page to load... </p>
+  {% endif %}
 
-    <br/>
-    <br/>
+  {% if isLookupReady %}
+    <!-- lookup worked, but article wasn't found on unsourced -->
+    <p class="notice">Unsourced.org has no information about this page.</p>
+    {% if pageDetails %}
+      {% if pageDetails.isDefinitelyNotArticle %}
+      {% else %}
+        <!-- page could be an article... -->
+        {% if pageDetails.indicatorsFound %}
+          <p class="notice notice-uhoh">This page looks like it might be missing some sources<br/>
+          (it contains phrases like "scientists say..." "a report out today" etc...)<br/>
+          </p>
+        {% else %}
+          <p>Think this page might be missing some sources?</p>
+        {% endif %}
+        <a class="btn" target="_blank" href="{{getSubmitURL}}">Flag it for sourcing</a><br/>
+        <p class="explain">(this will submit it to unsourced.org, where everyone can help track down the missing sources)</p>
+      {% endif %}
+    {% endif %}
+  {% endif %}
 
-    <small><a target="_blank" href="{{unsourced_url}}">More information about this article</a> (at unsourced.org)</small>
+
+{% endif %}
 </script>
 
-<!-- template when we have no details about the article -->
-<script id="popup-no-details-tmpl" type="text/x-jquery-tmpl">
-  <p>Sorry, no more information about this article. Think it might be missing sources or warning labels?<br/>
-    <br/>
-    <br/>
-  <a target="_blank" class="btn" href="{{submit_url}}">Source it</a>
-  </p>
-</script>
 
-<!-- template when we think there are sources missing from the article -->
-<script id="popup-sources-missing-tmpl" type="text/x-jquery-tmpl">
-  <p>It looks like there might be sources missing from this article...<br/>
-    <br/>
-    <br/>
-  <a target="_blank" class="btn" href="{{submit_url}}">Source it</a>
-  </p>
-</script>
 
+<!--  <header> 
+    <h3><img src="/img/logo.png" alt="Unsourced logo" /></h3>
+  </header>
+-->
   <div id="content">
   </div>
+  <footer>
+  </footer>
   </body>
 </html>
 
