@@ -45,6 +45,7 @@ $('#save').click( function(obj) {
   var new_opts = fetch();
 // FIREFOX
   self.port.emit("saveOptions", new_opts);
+  self.port.emit("byebye"); // all done. close the tab.
 // CHROME
 //    bg.storeOptions(new_opts);
   return false;
