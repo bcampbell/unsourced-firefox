@@ -11,6 +11,7 @@ body {
     padding: 0;
     font-size: smaller;
     color: #595959;
+    min-width: 20em;
 }
 
 
@@ -134,9 +135,9 @@ a:focus { outline: none; }
 }
 */
 
-.src-paper { background: url(/img/icon-paper.png) no-repeat 0px 8px; }
-.src-pr    { background: url(/img/icon-pr.png) no-repeat 0px 8px; }
-.src-other { background: url(/img/icon-other.png) no-repeat 0px 8px; }
+.src-paper { background: url(icon-paper.png) no-repeat 0px 8px; }
+.src-pr    { background: url(icon-pr.png) no-repeat 0px 8px; }
+.src-other { background: url(icon-other.png) no-repeat 0px 8px; }
 
 
 /****/

@@ -33,7 +33,7 @@ function bind(state,options) {
     display('popup-inactive-tmpl', {});
   } else {
 
-    // HACK HACK HACK FIX FIX FIX
+    // TODO: HACK HACK HACK FIX FIX FIX
     // in firefox version, content page can't access functions on the state,
     // so we fudge it by re-adding them here!
     state.getSubmitURL = function() {
@@ -64,15 +64,17 @@ function bind(state,options) {
 
 
         display('popup-details-tmpl', state);
+
         // wire up any other javascript here (eg buttons)
         // (chrome extensions don't support any javascript in the html file,
         // so it's got to be done here
-
-    //    var lookupButtons = document.querySelectorAll('.start-manual-lookup');
-    //    for (var i = 0; i < lookupButtons.length; ++i) {
-          // TODO: probably needs to be message-based
-    //      lookupButtons[i].onclick = function() { state.startLookup(); return false; }
-    //    }
+        var lookupButtons = document.querySelectorAll('.start-manual-lookup');
+        for (var i = 0; i < lookupButtons.length; ++i) {
+            lookupButtons[i].onclick = function() {
+              self.port.emit("startManualLookup");
+              return false;
+            };
+        }
   }
 }
 

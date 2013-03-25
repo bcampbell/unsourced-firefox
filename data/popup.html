@@ -104,7 +104,7 @@ When viewing news articles, information about their sources will appear here.
   <!-- article not found on unsourced (yet) - show what we know so far -->
 
   {% if isLookupPending %}
-   <p><img src="/img/busy.gif" /> Please wait - checking with unsourced.org... </p>
+   <p><img src="busy.gif" /> Please wait - checking with unsourced.org... </p>
   {% endif %}
   {% if isLookupError %}
     <p class="notice">
@@ -120,7 +120,7 @@ When viewing news articles, information about their sources will appear here.
       <a class="btn start-manual-lookup" href="#">Look it up on unsourced.org</a>
     {% endif %}
   {% else %}
-    <p><img src="/img/busy.gif" /> Waiting for page to load... </p>
+    <p><img src="busy.gif" /> Waiting for page to load... </p>
   {% endif %}
 
   {% if isLookupReady %}
