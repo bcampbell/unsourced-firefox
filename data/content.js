@@ -1,11 +1,54 @@
 console.log("start content.js: F.A.B.");
 
+
+// UGH. but need inline styles to trump all else.
+// (can't seem to override page styles with injected stylesheets on
+// firefox - normal css precedence rules don't seem to apply...
+// bug or just me screwing it up? Anyway. Inline styles bypass all that)
+var label_style = '\
+  display: block; \
+  margin: 1em 0; \
+  padding: 0.5em; \
+  max-width: 16em; \
+  font-size: 12px; \
+  line-height: 1.1; \
+  font-family: Helvetica, Arial, Sans-Serif; \
+  color: #000; \
+  background-color: #fbd415; \
+  border-radius: 0.5em; \
+  border: 0.4em solid #F8BB08; \
+  transform: translate3d(0,0,0) rotate(-15deg) scale(1); \
+  -webkit-transform: translate3d(0,0,0) rotate(-15deg); \
+  -moz-transform: translate3d(0,0,0) rotate(-15deg) scale(1); \
+  -webkit-transition: all 0.2s ease-in-out; \
+  -moz-transition: all 0.2s ease-in-out; \
+  ';
+
+var label_icon_style = '\
+  width: 32px; \
+  height: 32px; \
+  display: block; \
+  float: left; \
+  ';
+
+var label_bod_style = '\
+  margin-left: 40px; \
+  ';
+
+var label_head_style = '\
+  font-size: 120%; \
+  font-weight: bold; \
+  display: block; \
+  ';
+
+
 var label_template = '\
-<div class="unsrced-label">\
+<div class="unsrced-label" style="'+ label_style + '">\
 \
-  <img class="unsrced-label-icon" src="{{icon_url}}" alt="{{prettyname}}" />\
-  <div class="unsrced-label-bod"><div class="unsrced-label-head">WARNING</div>\
-  {{description}}\
+  <img class="unsrced-label-icon" src="{{icon_url}}" alt="{{prettyname}}" style="'+label_icon_style+'" />\
+  <div class="unsrced-label-bod" style="'+label_bod_style+'">\
+    <div class="unsrced-label-head" style="'+label_head_style+'">WARNING</div>\
+    {{description}}\
   </div>\
 </div>\
 ';

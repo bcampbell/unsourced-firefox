@@ -1,4 +1,5 @@
 /* styles for stuff injected into web pages */
+/* note: bulk of styling handled as inline style attrs to bypass precedence problems */
 
 #unsrced {
     position: fixed;
@@ -10,95 +11,11 @@
 }
 
 
-/****
- * warning label 
- */
-
-#unsrced .unsrced-label {
-  margin: 1em 0;
-  padding: 0.5em;
-  display: block;
-  color: #000;
-  background-color: #fbd415;
-  border-radius: 0.5em;
-  border: 0.4em solid #F8BB08; 
-  transform: translate3d(0,0,0) rotate(-15deg);
-  -webkit-transform: translate3d(0,0,0) rotate(-15deg);
-  -moz-transform: translate3d(0,0,0) rotate(-15deg);
-  font-size: 12px;
-
-  max-width: 16em;
-  -webkit-transition: all 0.2s ease-in-out;
-  -moz-transition: all 0.2s ease-in-out;
-}
-
+/* to animate labels upon mouseover */
+/* !important needed to work with inline styles */
 #unsrced .unsrced-label:hover {
-  transform: translate3d(0,0,0) rotate(0deg) scale(1.25);
-  -webkit-transform: translate3d(0,0,0) rotate(0deg) scale(1.25);
-  -moz-transform: translate3d(0,0,0) rotate(0deg) scale(1.25);
-}
-
-#unsrced .unsrced-label-icon {
-  width: 32px;
-  height: 32px;
-  display: block;
-  float: left;
-}
-
-#unsrced .unsrced-label-bod {
-  margin-left: 40px;
-}
-
-
-#unsrced .unsrced-label-head {
-  font-size: 120%;
-  font-weight: bold;
-  display: block;
-}
-
-/* TODO: see data/content.js for replicated inline style and notes */
-#unsrced .unsrced-notification {
-    background: #222;
-    /* height: 30px; */
-    /* line-height:30px; */
-    font-size:20px;
-    border-bottom: solid 2px #EEE;
-    padding: 8px 16px;
-    text-align: center;
-    color: white;
-
-    opacity: 0.9;
-/*    -webkit-transition:opacity 1s linear;
-    -moz-transition:opacity 1s linear;
-    transition:opacity 1s linear;
-*/
-
-    -moz-box-sizing: border-box;
-
-    /* properties to "lock" the top bar at the top of the viewport. */
-    position: fixed;
-    top: 0px;
-    left: 0px;
-    width: 100%;
-
-}
-#unsrced .unsrced-notification a { color: #888; }
-#unsrced .unsrced-notification a:visited { color: #ccc; }
-#unsrced .unsrced-notification a:hover { color: #fff; }
-
-#unsrced .unsrced-close {
-    float: right;
-
-    -moz-box-sizing: border-box;
-    padding: 0 8px;
-    color: white;
-    font-size: 30px;
-    border: 2px solid #222;
-}
-
-#unsrced a.unsrced-close:hover {
-    border-radius: 4px;
-    border: 2px solid #fff;
-/*    background-color: #fff;*/
+  transform: translate3d(0,0,0) rotate(0deg) scale(1.25) !important;
+  -webkit-transform: translate3d(0,0,0) rotate(0deg) scale(1.25) !important;
+  -moz-transform: translate3d(0,0,0) rotate(0deg) scale(1.25) !important;
 }
 
