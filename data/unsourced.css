@@ -5,7 +5,7 @@
     position: fixed;
     top: 32px;
     left: 32px;
-    z-index: 100;
+    z-index: 99999;
     font-size: 12px;
     font-family: Helvetica, Arial, Sans-Serif;
 }
