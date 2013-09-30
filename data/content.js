@@ -1,4 +1,4 @@
-console.log("start content.js: F.A.B.");
+var log = new LogWrapper(LogWrapper.DEBUG);
 
 
 // UGH. but need inline styles to trump all else.
@@ -78,9 +78,8 @@ function unsrced() {
 
 
 function showWarningLabels( labels ) {
-  console.log("Showing labels",labels);
+  log.info("Showing labels",labels);
   var overlay = unsrced();
-  console.log(overlay);
   for(var idx=0; idx<labels.length; idx++) {
     var label = labels[idx];
     var holder = document.createElement('div');
@@ -153,30 +152,44 @@ function searchHTML(node,strings) {
 };
 
 
+function searchText(haystack,needles) {
+  function reQuote(str) {
+    // escape special regexp chars
+    return str.replace(/([.?*+^$[\]\\(){}|-])/g, "\\$1");
+  };
+
+  // build strings into a single regexp
+  var pats = [];
+  for( var i=0; i<needles.length; ++i ) {
+    pats.push( '(?:' + reQuote(needles[i]) + ')' );
+  }
+  var pattxt = "(" + pats.join('|') + ")";
+  var pat = new RegExp(pattxt,"gi"); 
+
+  var results = [];
+  // NOTE: this relies on regexp having parentheses (ie capturing),
+  // so the matching part shows up in the list returned by split()
+  m = haystack.split(pat);
+  var i=0;
+  var pos=0;
+  while((i+1)<m.length) {
+    // every second item will be matching text
+    pos += m[i].length;
+    var end = pos + m[i+1].length;
+    results.push( [pos, end, m[i+1]] );
+    pos = end;
+    i+=2;
+  }
+  return results;
+}
+
 
 // check the content of the page for various stuff
 function examinePage() {
 
   var pd = {};
 
-  {
-    // search for text that might indicate an article requires sourcing...
-    var indicators = ["scientists have", "scientists say",  "paper published", "research suggests", "latest research", "researchers", "the study"]
-  /* other possibilities:
-    "according to a new study"
-    "the study"
-    "findings"
-  */
-
-  /* TODO: could check for obvious containers, to exclude menus, sidebars and other cruft */
-    var hits = searchHTML(document.body, indicators);
-    if(hits.length>0) {
-      // looks like sourcing is needed...
-      pd.indicatorsFound = true;
-    } else {
-      pd.indicatorsFound = false;
-    }
-  }
+  pd.indicatorsFound = checkForIndicators();
 
 
   // is an og:type metatag present?
@@ -253,6 +266,65 @@ function examinePage() {
 
   return pd;
 }
+
+
+
+// search for text that might indicate an article requires sourcing...
+// use readability algorithm to extract text, the main beneit being
+// that we're less likely to pick up crap in sidebars/adverts etc...
+var checkForIndicators = function() {
+    var indicators = {
+      "missing_source": [ "scientists have",
+        "scientists say",
+        "paper published",
+        "research suggests",
+        "latest research",
+        "researchers",
+        "the study" ],
+      "smelly": [ "online survey",
+        "online poll",
+        "onepoll",
+        "a survey commissioned by" ]
+    };
+
+  /* other possibilities:
+    "according to a new study"
+    "the study"
+    "findings"
+  */
+
+    var article = '';
+    var title = '';
+    try {
+        ArticleExtractor(window, LogWrapper.CRITICAL);
+        var article_document = new ExtractedDocument(document);
+        article = article_document.get_article_text();
+//        article = standardize_quotes(article, "'", "'", '"', '"');
+        //log.info("Article text: ", article);
+        title = article_document.get_title();
+        //inject_warning_ribbon();
+    } catch (e) {
+        log.notice("text extraction failed: ", e.message);
+        article = '';
+        title = '';
+    }
+
+    var out = false;
+    for (var x in indicators) {
+      var matches = searchText(article,indicators[x]);
+      if(matches.length>0) {
+        for(var i=0; i<matches.length; ++i ) {
+          log.info("Indicative of '" + x + "': '" + matches[i][2] + "'"); 
+        }
+        out = true;
+      }
+    }
+
+    return out;
+
+  }
+
+
 
 
 
