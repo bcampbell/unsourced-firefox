@@ -327,7 +327,17 @@ header h3 {
     padding: 0.2em 0.5em;
 }
 
-#content {
+/* extension popup */
+.ext-popup {
+/*    background-image: url('dark-canvas-pattern.png'); */
+}
+
+.ext-popup-header {
+}
+
+.ext-popup-content {
+    margin: 0;
     padding: 0.5em;
+    background-color: #fff;
 }
 

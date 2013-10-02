@@ -22,6 +22,14 @@ function display(tmplName,params)
     document.getElementById('content').innerHTML = parsed;
 }
 
+// helper for wiring up
+function seleach(csssel,f) {
+    var matches = document.querySelectorAll(csssel);
+      for (var i = 0; i < matches.length; ++i) {
+          f(matches[i]);
+      }
+}
+
 
 /* firefox specifics */
 
@@ -68,17 +76,33 @@ function bind(state,options) {
         // wire up any other javascript here (eg buttons)
         // (chrome extensions don't support any javascript in the html file,
         // so it's got to be done here
-        var lookupButtons = document.querySelectorAll('.start-manual-lookup');
-        for (var i = 0; i < lookupButtons.length; ++i) {
-            lookupButtons[i].onclick = function() {
+        seleach('.start-manual-lookup', function(button) {
+            button.onclick = function() {
               self.port.emit("startManualLookup");
               return false;
             };
-        }
+        });
+
+        
+        var labels = [{"icon_url": "http://localhost:8888/static/label-m/warn_churn.png", "prettyname": "Churnalism", "description": "This article is basically just a press release, copied and pasted.", "id": "churn"}, {"icon_url": "http://localhost:8888/static/label-m/warn_badheadline.png", "prettyname": "Misleading headline", "description": "Massively misleading headline", "id": "bad_headline"}, {"icon_url": "http://localhost:8888/static/label-m/warn_twisteddata.png", "prettyname": "Misrepresented research", "description": "This article misrepresents the research/statistics on which it claims to be based", "id": "misrep"}, {"icon_url": "http://localhost:8888/static/label-m/warn_generic.png", "prettyname": "Bogus research", "description": "Claims in this article are based on bogus research", "id": "bogus_data"}];
+        seleach('.add-warning', function(button) {
+            button.onclick = function() {
+              //self.port.emit("showstartManualLookup");
+              var template = document.getElementById('popup-warning-picker-tmpl').innerHTML;
+              var parsed = Ashe.parse(template, {'labels':labels});
+              document.getElementById('content').innerHTML = parsed;
+
+              seleach('.label', function(but) {
+                but.onclick = function() {
+                  var label_id = but.dataset.labelid;
+                  self.port.emit("addLabel",label_id);
+                };
+              });
+              return false;
+            };
+        });
   }
 }
-
-
 
 
 
