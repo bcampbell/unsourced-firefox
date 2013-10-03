@@ -12,6 +12,10 @@ function show(opts, builtin_whitelist ) {
   whitelist2.defaultValue = builtin_whitelist_str; // so revert button won't screw up the display :-)
   $(whitelist2).val(builtin_whitelist_str);
 
+
+  var server_addr = document.getElementById('server-addr');
+  $(server_addr).val(opts.search_server);
+
 /*    var blacklist = document.getElementById('user-blacklist');
   var blacklist_str = opts.user_blacklist.join("\n");
   blacklist.defaultValue = blacklist_str; // so revert button will work
@@ -32,6 +36,7 @@ function fetch() {
 //    opts.user_blacklist = $("#user-blacklist").val().split("\n");
 //    opts.user_blacklist = opts.user_blacklist.filter(function(a) {return a.trim()!="";});
 
+  opts.search_server = $("#server-addr").val();
 
   opts.debug = $('#debug').prop('checked');
   opts.show_overlays = $('#show-overlays').prop('checked');
