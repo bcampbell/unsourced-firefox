@@ -84,7 +84,8 @@ function bind(state,options) {
         });
 
         
-        var labels = [{"icon_url": "http://localhost:8888/static/label-m/warn_churn.png", "prettyname": "Churnalism", "description": "This article is basically just a press release, copied and pasted.", "id": "churn"}, {"icon_url": "http://localhost:8888/static/label-m/warn_badheadline.png", "prettyname": "Misleading headline", "description": "Massively misleading headline", "id": "bad_headline"}, {"icon_url": "http://localhost:8888/static/label-m/warn_twisteddata.png", "prettyname": "Misrepresented research", "description": "This article misrepresents the research/statistics on which it claims to be based", "id": "misrep"}, {"icon_url": "http://localhost:8888/static/label-m/warn_generic.png", "prettyname": "Bogus research", "description": "Claims in this article are based on bogus research", "id": "bogus_data"}];
+        // TODO: this list of labels should come from the server!
+        var labels = [{"icon_url": "http://unsourced.org/static/label-m/warn_churn.png", "prettyname": "Churnalism", "description": "This article is basically just a press release, copied and pasted.", "id": "churn"}, {"icon_url": "http://unsourced.org/static/label-m/warn_badheadline.png", "prettyname": "Misleading headline", "description": "Massively misleading headline", "id": "bad_headline"}, {"icon_url": "http://unsourced.org/static/label-m/warn_twisteddata.png", "prettyname": "Misrepresented research", "description": "This article misrepresents the research/statistics on which it claims to be based", "id": "misrep"}, {"icon_url": "http://unsourced.org/static/label-m/warn_generic.png", "prettyname": "Bogus research", "description": "Claims in this article are based on bogus research", "id": "bogus_data"}];
         seleach('.add-warning', function(button) {
             button.onclick = function() {
               //self.port.emit("showstartManualLookup");
