@@ -80,6 +80,12 @@ function unsrced() {
 function showWarningLabels( labels ) {
   log.info("Showing labels",labels);
   var overlay = unsrced();
+
+  // kill any existing labels
+  for (var i = overlay.children.length - 1; i >= 0; i--) {
+    overlay.removeChild(overlay.children[i]);
+  }
+  // show labels
   for(var idx=0; idx<labels.length; idx++) {
     var label = labels[idx];
     var holder = document.createElement('div');
