@@ -195,7 +195,7 @@ function examinePage() {
 
   var pd = {};
 
-  pd.indicatorsFound = checkForIndicators();
+  pd.smells = checkForSmells();
 
 
   // is an og:type metatag present?
@@ -275,22 +275,23 @@ function examinePage() {
 
 
 
-// search for text that might indicate an article requires sourcing...
-// use readability algorithm to extract text, the main beneit being
-// that we're less likely to pick up crap in sidebars/adverts etc...
-var checkForIndicators = function() {
-    var indicators = {
+// search for text that might indicate an article has some problem...
+var checkForSmells = function() {
+    var smells = {
       "missing_source": [ "scientists have",
         "scientists say",
         "paper published",
         "research suggests",
         "latest research",
-        "researchers",
-        "the study" ],
-      "smelly": [ "online survey",
+        "according to the scientists",
+        "according to scientists",
+        "writing in the journal"
+        ],
+      "dodgy_poll": [ "online survey",
         "online poll",
         "onepoll",
-        "a survey commissioned by" ]
+        "survey commissioned by",
+        "commissioned the study" ]
     };
 
   /* other possibilities:
@@ -299,6 +300,8 @@ var checkForIndicators = function() {
     "findings"
   */
 
+  // use readability algorithm to extract text, the main benefit being
+  // that we're less likely to pick up crap in sidebars/adverts etc...
     var article = '';
     var title = '';
     try {
@@ -315,18 +318,21 @@ var checkForIndicators = function() {
         title = '';
     }
 
-    var out = false;
-    for (var x in indicators) {
-      var matches = searchText(article,indicators[x]);
+    // now search the text for bad smells
+    var scores = {};
+    for (var x in smells) {
+      scores[x] = 0;
+      var matches = searchText(article,smells[x]);
       if(matches.length>0) {
+
         for(var i=0; i<matches.length; ++i ) {
-          log.info("Indicative of '" + x + "': '" + matches[i][2] + "'"); 
+          log.debug("checkForSmells(): found '" + matches[i][2] + "' (indicative of '" + x + "')"); 
         }
-        out = true;
+        scores[x] = matches.length;
       }
     }
 
-    return out;
+    return scores;
 
   }
 

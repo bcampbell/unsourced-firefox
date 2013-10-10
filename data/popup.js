@@ -70,6 +70,33 @@ function bind(state,options) {
       return false;
     };
 
+    state.badSmellsFound = function() {
+      if(this.pageDetails) {
+        return this.pageDetails.smells.missing_source>0 || this.pageDetails.smells.dodgy_poll>0;
+      } else {
+        return false;
+      }
+    };
+
+
+    // do we recommend that user should add a warning label?
+    state.isActionRecommended = function() {
+      if( this.pageDetails && this.pageDetails.isDefinitelyNotArticle) {
+        return false;
+      }
+
+      // unsourced doesn't think article needs any more work
+      if(this.wasArticleFound()) {
+        return this.isSourcingRequired();
+      }
+
+      if(this.badSmellsFound() ) {
+        return true;
+      }
+
+      return false;
+    }
+
 
         display('popup-details-tmpl', state);
 

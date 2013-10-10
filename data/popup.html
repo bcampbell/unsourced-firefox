@@ -52,28 +52,45 @@ When viewing news articles, information about them will appear here.
 </pre>
 {% endif %}
 
+<!-- show overall status -->
+<div class="lookup-status">
 
+{% if isLookupPending %}
+<img src="busy.gif" /> Checking - please wait
+{% endif %}
 
+{% if isLookupError %}
+    <span class="notice">Lookup failed.</span><a class="start-manual-lookup" href="#">try again</a>
+{% endif %}
 
+{% if isLookupNone %}
+  {% if pageDetails %}
+    {% if pageDetails.isDefinitelyNotArticle %}
+      Not checked - page is not a news article
+    {% else %}
+      Not checked [<a class="start-manual-lookup" href="#">look it up</a>]
+    {% endif %}
+  {% else %}
+    <img src="busy.gif" /> Page loading - please wait
+  {% endif %}
+{% endif %}
+
+{% if isLookupReady %}
+{% if wasArticleFound %}
+Information from unsourced.org [<a target="_blank" href="{{lookupResults.unsourced_url}}">go there</a>]
+{% else %}
+No information about this article on unsourced.org
+{% endif %}
+{% endif %}
+
+</div>
 
 
 <!-- show results -->
-{% if wasArticleFound %}
-
-    {% for label in lookupResults.labels %}    
-<div class="label">
-<img class="label-icon" src="{{label.icon_url}}"/><div class="label-bod"><div class="label-head">WARNING</div>{{label.description}}</div>
-</div>
-    {% endfor %}
-
-    <div><a class="btn add-warning" href="#">Add a warning label</a></div>
-
-    <br/>
-
-    {% if lookupResults.sources.length %} 
+    {% if sources.length %} 
     <h3>Sources</h3>
     <ul class="srclist">
-    {% for src in lookupResults.sources %}
+    {% for src in sources %}
       <li class="src src-{{src.kind}}">
         <div class="src-info">
         <span class="src-link">{{src|sourcelink}}</span>
@@ -93,65 +110,42 @@ When viewing news articles, information about them will appear here.
     </ul>
     {% endif %}
 
-  {% if lookupResults.needs_sourcing %}
-    <p class="notice notice-uhoh">This article is still missing some sources.</p>
-    <a target="_blank" class="btn" href="{{lookupResults.unsourced_url}}">Source it</a>
+    {% for label in labels %}    
+<div class="label">
+<img class="label-icon" src="{{label.icon_url}}"/><div class="label-bod"><div class="label-head">WARNING</div>{{label.description}}</div>
+</div>
+    {% endfor %}
+
+    
+<!-- show any bad smells -->
+{% if badSmellsFound %}
+<p class="notice notice-uhoh">This article looks like it might have some problems:
+<ul>
+  {% if pageDetails.smells.missing_source %}
+  <li>it contains phrases like "scientists say" or "a report out today", which could indicate missing sources</li>
   {% endif %}
-
-
-  {% if lookupResults.unsourced_url %}
-  <a target="_blank" href="{{lookupResults.unsourced_url}}">See this article's page on unsourced.org</a>
+  {% if pageDetails.smells.dodgy_poll %}
+  <li>it looks like it might be based on a dodgy online poll or survey</li>
   {% endif %}
-
-
+</ul>
+</p>
 {% else %}
-
-  <!-- article not found on unsourced (yet) - show what we know so far -->
-
-  {% if isLookupPending %}
-   <p><img src="busy.gif" /> Please wait - checking with unsourced.org... </p>
+  {% if isSourcingRequired %}
+  <p class="notice notice-uhoh">This article looks like it might be missing sources [<a target="_blank" href="{{lookupResults.unsourced_url}}">add one</a>]</p>
   {% endif %}
-  {% if isLookupError %}
-    <p class="notice">
-      Sorry - there was a problem checking this article on unsourced.org...<br/>
-      <a class="start-manual-lookup" href="#">try again</a>
-    </p>
-  {% endif %}
-
-  {% if contentReady %}
-    {% if isLookupNone %}
-      <!-- no lookup was attempted. give the option to manually start lookup -->
-      <p>Is this page a news article?</p>
-      <a class="btn start-manual-lookup" href="#">Look it up on unsourced.org</a>
-      <p>Is there something wrong with it?</p>
-      <a class="btn add-warning" href="#">Add a warning label</a><br/>
-    {% endif %}
-  {% else %}
-    <p><img src="busy.gif" /> Waiting for page to load... </p>
-  {% endif %}
-
-  {% if isLookupReady %}
-    <!-- lookup worked, but article wasn't found on unsourced -->
-    <p class="notice">Unsourced.org has no information on this article.</p>
-    {% if pageDetails %}
-      {% if pageDetails.isDefinitelyNotArticle %}
-      {% else %}
-        <!-- page could be an article... -->
-        {% if pageDetails.indicatorsFound %}
-          <p class="notice notice-uhoh">This article looks like it might be missing some sources<br/>
-          (it contains phrases like "scientists say..." "a report out today" etc...)<br/>
-          </p>
-          <a class="btn btn-major add-warning" href="#">Add a warning label</a><br/>
-        {% else %}
-          <p>Think there are problems with this article?</p>
-          <a class="btn add-warning" href="#">Add a warning label</a><br/>
-        {% endif %}
-      {% endif %}
-    {% endif %}
-  {% endif %}
-
-
 {% endif %}
+
+
+
+<!-- call to action -->
+{% if isActionRecommended %}
+    {% if labels.length %}
+    <a class="btn add-warning" href="#">Add another warning label</a><br/>
+    {% else %}
+    <a class="btn add-warning" href="#">Add a warning label</a><br/>
+    {% endif %}
+{% endif %}
+
 </script>
 
 
