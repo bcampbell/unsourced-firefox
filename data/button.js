@@ -2,9 +2,9 @@
 function reconfig(params) {
 //  console.log("button.js: reconfig");
   var icons = {
-    'missingsources': "nag.gif",
-    'unsourced': "unsourced.png",
-    'sourced': "sourced.png"
+    'attention': "nag.gif",
+    'unknown': "unsourced.png",
+    'good': "sourced.png"
   };
 
   var icon_img = document.getElementById("icon-img");
